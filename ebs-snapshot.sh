@@ -31,8 +31,12 @@ set -o pipefail
 instance_id=$(wget -q -O- http://169.254.169.254/latest/meta-data/instance-id)
 region=$(wget -q -O- http://169.254.169.254/latest/meta-data/placement/availability-zone | sed -e 's/\([1-9]\).$/\1/g')
 
+# TB: Get instance name and cost allocation tag
+instance_name=$(aws ec2 describe-tags --filters "Name=resource-id,Values=$instance_id" "Name=key,Values=Name" --region=$region --output=text | cut -f5)
+client_tag=$(aws ec2 describe-tags --filters "Name=resource-id,Values=$instance_id" "Name=key,Values=Client" --region=$region --output=text | cut -f5)
+
 # Set Logging Options
-logfile="/var/log/ebs-snapshot.log"
+logfile="/home/ubuntu/ebs-backup-log/ebs-snapshot.log"
 logfile_max_lines="5000"
 
 # How many days do you wish to retain backups for? Default: 7 days
@@ -83,7 +87,7 @@ snapshot_volumes() {
 	 
 		# Add a "CreatedBy:AutomatedBackup" tag to the resulting snapshot.
 		# Why? Because we only want to purge snapshots taken by the script later, and not delete snapshots manually taken.
-		aws ec2 create-tags --region $region --resource $snapshot_id --tags Key=CreatedBy,Value=AutomatedBackup
+		aws ec2 create-tags --region $region --resource $snapshot_id --tags Key=CreatedBy,Value=AutomatedBackup Key=Name,Value=$instance_name-AutomatedSnapshot Key=Client,Value=$client_tag
 	done
 }
 

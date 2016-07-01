@@ -36,7 +36,8 @@ Pull requests greatly welcomed!
                 "ec2:CreateTags",
                 "ec2:DeleteSnapshot",
                 "ec2:DescribeSnapshots",
-                "ec2:DescribeVolumes"
+                "ec2:DescribeVolumes",
+                "ec2:DescribeTags"
             ],
             "Resource": [
                 "*"
@@ -76,7 +77,7 @@ Default output format: (Enter "text".)```
 **Install Script**: Download the latest version of the snapshot script and make it executable:
 ```
 cd ~
-wget https://raw.githubusercontent.com/CaseyLabs/aws-ec2-ebs-automatic-snapshot-bash/master/ebs-snapshot.sh
+wget https://raw.githubusercontent.com/tbuckel/aws-ec2-ebs-automatic-snapshot-bash/master/ebs-snapshot.sh
 chmod +x ebs-snapshot.sh
 mkdir -p /opt/aws
 sudo mv ebs-snapshot.sh /opt/aws/
